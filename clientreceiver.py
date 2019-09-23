@@ -10,7 +10,7 @@ def receivefile():
     n = 0
     f = open("niggerreceivenew.txt",'wb')
     
-    while (True):       
+    for _ in range(3):       
         l = soc.recv(40000)
         # while (l):
         print(l)
@@ -20,7 +20,7 @@ def receivefile():
         # l = soc.recv(1024)
         n = n + 1
         print("Received iteration" + str(n))
-        f.close()
+    f.close()
     soc.close()
 
 receivefile()

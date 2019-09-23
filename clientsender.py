@@ -18,7 +18,7 @@ def sendfile(filepath, fileid):
     while(send1):
         n = n + 1
 
-        packetData = f.read(32768)
+        packetData = f.read(10)
         packetID = bytearray(fileid, 'utf-8')
         packetLength = bytearray(str(os.path.getsize(filepath)), 'utf-8')
         packetSequenceNumber = bytearray(str(n), 'utf-8')
@@ -26,7 +26,8 @@ def sendfile(filepath, fileid):
         # packetChecksum = checksum(packetData, packetLength, packetSequenceNumber, packetData)
 
         sendpacket(packetType + packetID + packetSequenceNumber + packetLength + packetData)
-        send1 = False
+        if n == 3:
+            send1 = False
     
 # def checksum(packetData, packetLength, packetSequenceNumber, packetData):
 
