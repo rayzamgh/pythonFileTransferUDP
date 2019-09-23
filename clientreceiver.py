@@ -5,13 +5,13 @@ import sys
 def receivefile():
     soc = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
     
-    soc.bind(("localhost",6969))
+    soc.bind(("localhost",9999))
 
     n = 0
-    f = open("niggerreceive.txt",'wb')
+    f = open("niggerreceivenew.txt",'wb')
     
     while (True):       
-        l = soc.recv(1024)
+        l = soc.recv(40000)
         # while (l):
         print(l)
         f.write(l)

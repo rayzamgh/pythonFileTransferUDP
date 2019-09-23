@@ -10,35 +10,32 @@ import os
 # DATA (32KB/32768 bytes max)
 
 
-def sendfile(filepath, port):
-    s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-    s.connect(("localhost",port))
+def sendfile(filepath, fileid):
     f = open (filepath, "rb")
 
     n = 0
-    
-    while(not EOF):
+    send1 = True
+    while(send1):
         n = n + 1
 
         packetData = f.read(32768)
-        packetID = bin()
-        packetLength = os.path.getsize(filepath)
-        packetSequenceNumber = n
-        packetChecksum = checksum(packetData, packetLength, packetSequenceNumber, packetData)
+        packetID = bytearray(fileid, 'utf-8')
+        packetLength = bytearray(str(os.path.getsize(filepath)), 'utf-8')
+        packetSequenceNumber = bytearray(str(n), 'utf-8')
+        packetType = bytearray('pepeg', 'utf-8')
+        # packetChecksum = checksum(packetData, packetLength, packetSequenceNumber, packetData)
 
-        sendpacket()
-
-    l = f.read(1024)
+        sendpacket(packetType + packetID + packetSequenceNumber + packetLength + packetData)
+        send1 = False
     
-def checksum(packetData, packetLength, packetSequenceNumber, packetData):
+# def checksum(packetData, packetLength, packetSequenceNumber, packetData):
 
 
-def sendpacket(packetType, packetSequenceNumber, packetLength, packetChecksum, packetData)
+def sendpacket(data):
+    s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    s.connect(("localhost",9999))
 
-while (l):
-    print(l)
-    s.send(l)
-    n = n + 1
-    l = f.read(1024)
-    print("Sent iteration" + str(n))
-s.close()
+    s.send(data)
+    print("Sent data :" + str(data))
+
+sendfile("nigger.txt", "1")
