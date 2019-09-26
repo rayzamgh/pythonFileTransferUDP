@@ -17,11 +17,9 @@ def checksum(xorMaterial):
 def receivefile(inputPort):
     soc = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
-    soc.bind(('', inputPort))
+    fileDictionary = {}
 
-    obtainedFiles = []
-    allRecvPacket = []
-    fileArrays = []
+    soc.bind(('', inputPort))
 
     notFin = True
 
@@ -43,13 +41,12 @@ def receivefile(inputPort):
             print("RECEIVED PACKET ID")
             print(receivedPacketID)
 
-            if receivedPacketID not in obtainedFiles:
-                obtainedFiles.append(receivedPacketID)
-                while len(fileArrays) <= receivedPacketID:
-                    sublist = []
-                    fileArrays.append(sublist)
+            thisDictKey = senderaddress[0] + str(receivedPacketID)
+
+            if thisDictKey not in fileDictionary:
+                fileDictionary[thisDictKey] = []
             if receivedPacket[5:7] == checksum(receivedPacket[0:5] + receivedPacket[7:len(receivedPacket)]):
-                allRecvPacket.append(receivedPacket)
+                
                 responsePacket = bytes([receivedPacketType + 16])
                 responsePacket += receivedPacket[1:len(receivedPacket)]
                 
@@ -58,17 +55,19 @@ def receivefile(inputPort):
                 print('RESPONSE SENT')
                 print(responsePacket[0:8])
 
-                print('FILE ARRAYS LEN: ' + str(len(fileArrays)))
+                print('FILE ARRAYS LEN: ' + str(len(fileDictionary)))
                 print('PACKET ID: ' + str(receivedPacketID))
-                fileArrays[receivedPacketID].append(receivedPacket)
+                print('SENDER ADDRESS: ' + str(senderaddress[0]))
+
+                fileDictionary[thisDictKey].append(receivedPacket)
 
                 if receivedPacketType == 1:
                     # FIN
                     packetForCurrentID = []
                     
                     writetofile = bytearray([])
-                    f = open ("Response" + str(receivedPacketID), "wb")
-                    for packet in fileArrays[receivedPacketID]:
+                    f = open ("Response" + str(thisDictKey), "wb")
+                    for packet in fileDictionary[thisDictKey]:
                         packetForCurrentID.append((packet, int.from_bytes(packet[1:3], 'big')))
                     
                     sortedPacketForCurrentID = Sort_Tuple(packetForCurrentID)
