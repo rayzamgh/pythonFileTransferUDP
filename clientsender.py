@@ -13,7 +13,7 @@ import threading
 
 TIMEOUT = 10
 PACKETSIZE = 32768
-sys.setrecursionlimit(150000)
+# sys.setrecursionlimit(150000)
 # UDP_IP_ADDRESS = "127.0.0.1"
 # UDP_PORT_NO = 9999
 
@@ -35,7 +35,7 @@ def sendfile(filepath, fileid, ipaddress, inputPort):
 
     while(send1):
         n = n + 1
-        print('sent packet number' + str(n))
+        # print('sent packet number' + str(n))
         currentData = nextData
         nextData    = f.read(PACKETSIZE)
 
@@ -61,7 +61,7 @@ def sendfile(filepath, fileid, ipaddress, inputPort):
         # print(packetSequenceNumber)
 
         recursiveSend(packetIDandType, packetSequenceNumber, packetLength, packetChecksum, currentData, s, n, senderaddress, inputPort)
-               
+
     s.close()
     
 def recursiveSend(packetIDandType, packetSequenceNumber, packetLength, packetChecksum, currentData, s, n, senderaddress, inputPort):
@@ -71,23 +71,29 @@ def recursiveSend(packetIDandType, packetSequenceNumber, packetLength, packetChe
         # print(data[0:8])
         sendpacket(data, s, senderaddress, inputPort)
         returnedPacket, senderaddress = s.recvfrom(40000)
-        print("RESPONSE RECEIVED")
+        # print("RESPONSE RECEIVED")
         if (returnedPacket[0] >> 4) != 1 and (returnedPacket[0] >> 4) != 3:
             raise Exception('Packet received was not an acknowledgement packet')
         else:
-            print('ACKNOWLEDGED' + str(returnedPacket[0] >> 4))
+            # print('ACKNOWLEDGED' + str(returnedPacket[0] >> 4))
     except Exception as inst:
-        print(inst.args)
-        print('RESENT PACKET NUMBER: ' + str(n))
+        # print(inst.args)
+        # print('RESENT PACKET NUMBER: ' + str(n))
         recursiveSend(packetIDandType, packetSequenceNumber, packetLength, packetChecksum, currentData, s, n, senderaddress, inputPort)
     
 
+# def xorBytes(xorMaterial):
+#     # print(len(xorMaterial))
+#     if len(xorMaterial) <= 2:
+#         return (xorMaterial[0])
+#     else:
+#         return (xorMaterial[0] ^ xorBytes(xorMaterial[2:len(xorMaterial)]))
+
 def xorBytes(xorMaterial):
-    # print(len(xorMaterial))
-    if len(xorMaterial) <= 2:
-        return (xorMaterial[0])
-    else:
-        return (xorMaterial[0] ^ xorBytes(xorMaterial[2:len(xorMaterial)]))
+    returnXor = xorMaterial[0]
+    for x in range(0, len(xorMaterial) - 2, 2):
+        returnXor = returnXor ^ xorMaterial[x+2]
+    return returnXor
 
 def checksum(xorMaterial):
     return (bytes([xorBytes(xorMaterial)]) + bytes([xorBytes(xorMaterial[1:len(xorMaterial)])]) ) 

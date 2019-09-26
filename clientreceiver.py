@@ -2,19 +2,26 @@ import socket
 import sys
 import threading
 
-sys.setrecursionlimit(150000)
+# sys.setrecursionlimit(150000)
 
 # UDP_IP_ADDRESS = "127.0.0.1"
 # UDP_PORT_NO = 6789
 
 MAXPACKETSIZE = 40000
 
+# def xorBytes(xorMaterial):
+#     # print(len(xorMaterial))
+#     if len(xorMaterial) <= 2:
+#         return (xorMaterial[0])
+#     else:
+#         return (xorMaterial[0] ^ xorBytes(xorMaterial[2:len(xorMaterial)]))
+
 def xorBytes(xorMaterial):
-    # print(len(xorMaterial))
-    if len(xorMaterial) <= 2:
-        return (xorMaterial[0])
-    else:
-        return (xorMaterial[0] ^ xorBytes(xorMaterial[2:len(xorMaterial)]))
+    returnXor = xorMaterial[0]
+    for x in range(0, len(xorMaterial) - 2, 2):
+        returnXor = returnXor ^ xorMaterial[x+2]
+    return returnXor
+
 
 def checksum(xorMaterial):
     return (bytes([xorBytes(xorMaterial)]) + bytes([xorBytes(xorMaterial[1:len(xorMaterial)])]) ) 
@@ -34,7 +41,7 @@ def receivefile(inputPort):
 
     print("ASSIGNED IP ADDRESS IS :" )
     # print(socket.gethostbyname(socket.gethostname()))
-    print(soc.getsockname()[0])
+    print(socket.getfqdn())
 
     while True:
         while notFin:       
