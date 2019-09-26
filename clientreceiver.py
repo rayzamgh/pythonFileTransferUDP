@@ -33,7 +33,8 @@ def receivefile(inputPort):
     notFin = True
 
     print("ASSIGNED IP ADDRESS IS :" )
-    print(socket.gethostbyname(socket.gethostname()))
+    # print(socket.gethostbyname(socket.gethostname()))
+    print(soc.getsockname()[0])
 
     while True:
         while notFin:       
